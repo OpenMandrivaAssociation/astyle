@@ -1,11 +1,11 @@
 Summary:	Reindenter and reformatter of C++, C and Java source code
 Name:		astyle
-Version:	2.04
-Release:	6
+Version:	3.1
+Release:	1
 License:	LGPLv3+
 Group:		Development/C
 Url:		http://astyle.sourceforge.net/
-Source0:	http://internap.dl.sourceforge.net/sourceforge/astyle/astyle_%{version}_linux.tar.gz
+Source0:	https://netix.dl.sourceforge.net/project/astyle/astyle/astyle%%20%{version}/astyle_%{version}_linux.tar.gz
 
 %description
 Artistic Style is a series of filters that automatically reindent and reformat
