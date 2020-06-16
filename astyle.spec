@@ -32,8 +32,8 @@ This package contains the library needed to run programs dynamically
 linked with the %{name} library as well as the JNI version.
 
 %files -n %{libname}
-%{_libdir}/lib%{name}.so.%{major}.*
-%{_libdir}/lib%{name}j.so.%{major}.*
+%{_libdir}/lib%{name}.so.%{major}*
+%{_libdir}/lib%{name}j.so.%{major}*
 
 %package -n %{devname}
 Summary:	Development files for using %{name} library
