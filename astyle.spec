@@ -5,7 +5,7 @@
 Summary:	Reindenter and reformatter of C++, C and Java source code
 Name:		astyle
 Version:	3.1
-Release:	1
+Release:	2
 License:	LGPLv3+
 Group:		Development/C
 Url:		http://astyle.sourceforge.net/
