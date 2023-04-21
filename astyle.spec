@@ -4,13 +4,15 @@
 
 Summary:	Reindenter and reformatter of C++, C and Java source code
 Name:		astyle
-Version:	3.1
-Release:	2
+Version:	3.2.1
+Release:	1
 License:	LGPLv3+
 Group:		Development/C
 Url:		http://astyle.sourceforge.net/
-Source0:	https://netix.dl.sourceforge.net/project/astyle/astyle/astyle%%20%{version}/astyle_%{version}_linux.tar.gz
-BuildRequires:	java-devel
+Source0:	https://netix.dl.sourceforge.net/project/astyle/astyle/astyle%%20%{version}/%{name}-%{version}.tar.bz2
+BuildRequires:	jdk-current
+BuildRequires:	cmake
+BuildRequires:	ninja
 Requires:	%{libname}
 
 %description
@@ -19,8 +21,9 @@ C/C++/Java source files. These can be used from a command line, or they can be
 incorporated as classes in another C++ program.
 
 %files
-%doc doc/*
+%doc %{_docdir}/%{name}/html/*.html
 %{_bindir}/astyle
+%doc %{_mandir}/man1/astyle.1*
 
 #----------------------------------------------------------------------------
 %package -n %{libname}
@@ -51,39 +54,55 @@ Development files for using %{name} library.
 %{_includedir}/%{name}.h
 
 %prep
-%autosetup -p1 -n %{name}
+%autosetup -p1
 
-#fix rights
+# fix rights
 chmod 644 doc/*
 
-%build
-%set_build_flags
-export JAVA_HOME=%{_prefix}/lib/jvm/java
-%make_build -C build/clang CC=%{__cc} CFLAGS="%{optflags}" LDFLAGS="%{ldflags}" prefix=%{_prefix} release shared java
-cd build/clang/bin/
-# libastyle
-    ln -s lib%{name}.so.%{version} lib%{name}.so.%{major}
-    ln -s lib%{name}.so.%{major} lib%{name}.so
-# libastylej (jni)
-    ln -s lib%{name}j.so.%{version} lib%{name}j.so.%{major}
-    ln -s lib%{name}j.so.%{major} lib%{name}j.so
-cd ..
+# (tpg) adjust libdir
+sed -i -e "s/DESTINATION lib/DESTINATION %{_lib}/" build/cmake/InstallOptions.cmake
 
+mkdir -p ../build-binary
+mkdir -p ../build-shared
+cp -af * ../build-binary ||:
+cp -af * ../build-shared ||:
+
+. %{_sysconfdir}/profile.d/90java.sh
+# (tpg) build libries
+%cmake \
+	-DBUILD_SHARED_LIBS=ON \
+	-DBUILD_JAVA_LIBS=ON \
+	-DJAVA_HOME="$JAVA_HOME" \
+	-DJAVA_AWT_LIBRARY="$JAVA_HOME/lib/libjawt.so" \
+	-G Ninja
+
+# (tpg) build shared
+cd ../../build-shared
+%cmake \
+	-DBUILD_SHARED_LIBS=ON \
+	-DBUILD_JAVA_LIBS=OFF \
+	-DJAVA_HOME="$JAVA_HOME" \
+	-DJAVA_AWT_LIBRARY="$JAVA_HOME/lib/libjawt.so" \
+	-G Ninja
+
+# (tpg) build binary
+cd ../../build-binary
+%cmake \
+	-DBUILD_SHARED_LIBS=OFF \
+	-DBUILD_JAVA_LIBS=OFF \
+	-DJAVA_HOME="$JAVA_HOME" \
+	-DJAVA_AWT_LIBRARY="$JAVA_HOME/lib/libjawt.so" \
+	-G Ninja
+
+%build
+%ninja_build -C build
+%ninja_build -C ../build-shared/build
+%ninja_build -C ../build-binary/build
 
 %install
-install -Dm755 build/clang/bin/%{name} %{buildroot}%{_bindir}/%{name}
+install -m644 -D ./src/astyle.h %{buildroot}%{_includedir}/astyle.h
 
-# libastyle version
-v="3.1.0"
-
-install -Dm755 build/clang/bin/lib%{name}.so."$v" %{buildroot}%{_libdir}/lib%{name}.so."$v"
-cp -P build/clang/bin/lib%{name}.so.%{major} %{buildroot}%{_libdir}/lib%{name}.so.%{major}
-cp -P build/clang/bin/lib%{name}.so %{buildroot}%{_libdir}/lib%{name}.so
-
-# libastylej (jni)
-install -Dm755 build/clang/bin/lib%{name}j.so."$v" %{buildroot}%{_libdir}/lib%{name}j.so."$v"
-cp -P build/clang/bin/lib%{name}j.so.%{major} %{buildroot}%{_libdir}/lib%{name}j.so.%{major}
-cp -P build/clang/bin/lib%{name}j.so %{buildroot}%{_libdir}/lib%{name}j.so
-
-install -Dm644 src/%{name}.h %{buildroot}%{_includedir}/%{name}.h
+%ninja_install -C build
+%ninja_install -C ../build-shared/build
+%ninja_install -C ../build-binary/build
 
