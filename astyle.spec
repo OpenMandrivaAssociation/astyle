@@ -4,7 +4,7 @@
 
 Summary:	Reindenter and reformatter of C++, C and Java source code
 Name:		astyle
-Version:	3.2.1
+Version:	3.3.1
 Release:	1
 License:	LGPLv3+
 Group:		Development/C
@@ -22,6 +22,7 @@ incorporated as classes in another C++ program.
 
 %files
 %doc %{_docdir}/%{name}/html/*.html
+%doc %{_docdir}/%{name}/html/*.css
 %{_bindir}/astyle
 %doc %{_mandir}/man1/astyle.1*
 
@@ -59,8 +60,9 @@ Development files for using %{name} library.
 # fix rights
 chmod 644 doc/*
 
-# (tpg) adjust libdir
-sed -i -e "s/DESTINATION lib/DESTINATION %{_lib}/" build/cmake/InstallOptions.cmake
+# (tpg) adjust dirs
+sed -i -e "s#DESTINATION lib#DESTINATION %{_lib}#" build/cmake/InstallOptions.cmake
+sed -i -e "s#/man/man1#/share/man/man1#" build/cmake/InstallOptions.cmake
 
 mkdir -p ../build-binary
 mkdir -p ../build-shared
