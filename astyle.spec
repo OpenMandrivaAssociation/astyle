@@ -8,7 +8,7 @@ Version:	3.4
 Release:	1
 License:	LGPLv3+
 Group:		Development/C
-Url:		http://astyle.sourceforge.net/
+Url:		https://astyle.sourceforge.net/
 Source0:	https://netix.dl.sourceforge.net/project/astyle/astyle/astyle%%20%{version}/%{name}-%{version}.tar.bz2
 BuildRequires:	jdk-current
 BuildRequires:	cmake
