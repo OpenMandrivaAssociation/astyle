@@ -4,12 +4,12 @@
 
 Summary:	Reindenter and reformatter of C++, C and Java source code
 Name:		astyle
-Version:	3.4
+Version:	3.6.5
 Release:	1
 License:	LGPLv3+
 Group:		Development/C
 Url:		https://astyle.sourceforge.net/
-Source0:	https://netix.dl.sourceforge.net/project/astyle/astyle/astyle%%20%{version}/%{name}-%{version}.tar.bz2
+Source0:	https://netix.dl.sourceforge.net/project/astyle/astyle/astyle%%20%(echo %{version}|cut -d. -f1-2)/%{name}-%{version}.tar.bz2
 BuildRequires:	jdk-current
 BuildRequires:	cmake
 BuildRequires:	ninja
@@ -61,8 +61,7 @@ Development files for using %{name} library.
 chmod 644 doc/*
 
 # (tpg) adjust dirs
-sed -i -e "s#DESTINATION lib#DESTINATION %{_lib}#" build/cmake/InstallOptions.cmake
-sed -i -e "s#/man/man1#/share/man/man1#" build/cmake/InstallOptions.cmake
+sed -i -e "s#DESTINATION lib#DESTINATION %{_lib}#" CMakeLists.txt
 
 mkdir -p ../build-binary
 mkdir -p ../build-shared
@@ -74,6 +73,7 @@ cp -af * ../build-shared ||:
 %cmake \
 	-DBUILD_SHARED_LIBS=ON \
 	-DBUILD_JAVA_LIBS=ON \
+	-DINSTALL_DOC:BOOL=ON \
 	-DJAVA_HOME="$JAVA_HOME" \
 	-DJAVA_AWT_LIBRARY="$JAVA_HOME/lib/libjawt.so" \
 	-G Ninja
@@ -83,6 +83,7 @@ cd ../../build-shared
 %cmake \
 	-DBUILD_SHARED_LIBS=ON \
 	-DBUILD_JAVA_LIBS=OFF \
+	-DINSTALL_DOC:BOOL=ON \
 	-DJAVA_HOME="$JAVA_HOME" \
 	-DJAVA_AWT_LIBRARY="$JAVA_HOME/lib/libjawt.so" \
 	-G Ninja
@@ -92,6 +93,7 @@ cd ../../build-binary
 %cmake \
 	-DBUILD_SHARED_LIBS=OFF \
 	-DBUILD_JAVA_LIBS=OFF \
+	-DINSTALL_DOC:BOOL=ON \
 	-DJAVA_HOME="$JAVA_HOME" \
 	-DJAVA_AWT_LIBRARY="$JAVA_HOME/lib/libjawt.so" \
 	-G Ninja
