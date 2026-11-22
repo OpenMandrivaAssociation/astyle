@@ -4,7 +4,7 @@
 
 Summary:	Reindenter and reformatter of C++, C and Java source code
 Name:		astyle
-Version:	3.6.26
+Version:	3.6.27
 Release:	1
 License:	LGPLv3+
 Group:		Development/C
