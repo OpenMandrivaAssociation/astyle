@@ -23,6 +23,7 @@ incorporated as classes in another C++ program.
 %files
 %doc %{_docdir}/%{name}/html/*.html
 %doc %{_docdir}/%{name}/html/*.css
+%doc %{_docdir}/%{name}/html/*.js
 %{_bindir}/astyle
 %doc %{_mandir}/man1/astyle.1*
 
